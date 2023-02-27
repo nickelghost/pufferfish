@@ -18,6 +18,11 @@
         name: "{{ lookup('aws_ssm', tfbackend_s3_name_parameter_path) }}"
         versioning: true
         encryption: "aws:kms"
+        public_access:
+          block_public_acls: true
+          block_public_policy: true
+          ignore_public_acls: true
+          restrict_public_buckets: true
         tags:
           ManagedBy: Ansible
     - name: Create the DynamoDB table for locking
