@@ -1,0 +1,7 @@
+---
+- name: App
+  hosts: all
+  roles:
+    - common
+    - cloudwatch
+    - pufferfish

@@ -1,0 +1,51 @@
+---
+- name: Download binary
+  become: true
+  notify: Restart pufferfish
+  amazon.aws.s3_object:
+    bucket: "{{ builds_s3_name }}"
+    object: pufferfish
+    dest: "{{ binary_path }}"
+    mode: get
+    overwrite: different
+- name: Set binary permissions
+  become: true
+  ansible.builtin.file:
+    path: "{{ binary_path }}"
+    mode: "0611"
+- name: Create user
+  become: true
+  ansible.builtin.user:
+    name: "{{ user_name }}"
+- name: Create log directory
+  become: true
+  ansible.builtin.file:
+    path: /var/log/pufferfish
+    state: directory
+    mode: 0755
+- name: Create config directory
+  become: true
+  ansible.builtin.file:
+    path: /etc/pufferfish
+    state: directory
+    mode: 0755
+- name: Upload env config
+  become: true
+  notify: Restart pufferfish
+  ansible.builtin.template:
+    src: env
+    dest: /etc/pufferfish/env
+    mode: 0600
+- name: Upload service
+  become: true
+  notify: Restart pufferfish
+  ansible.builtin.template:
+    src: pufferfish.service
+    dest: /lib/systemd/system/pufferfish.service
+    mode: 0644
+- name: Start and enable service
+  become: true
+  ansible.builtin.systemd:
+    name: pufferfish
+    state: started
+    enabled: true

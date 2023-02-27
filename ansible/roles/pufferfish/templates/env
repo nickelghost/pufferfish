@@ -1,0 +1,3 @@
+{% for p in app_params | dict2items %}
+{{ p.key }}={{ p.value }}
+{% endfor %}

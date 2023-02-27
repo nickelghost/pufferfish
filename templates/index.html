@@ -1,0 +1,13 @@
+{{ define "content" }}
+
+<h2>Pufferfish Index</h2>
+
+<ul>
+  {{ range $pf := .PufferfishList }}
+  <li>
+    <a href="/{{ $pf.ID }}">{{ $pf.Name }}</a>
+  </li>
+  {{ end }}
+</ul>
+
+{{ end }}

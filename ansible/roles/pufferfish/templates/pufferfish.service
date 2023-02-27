@@ -1,0 +1,15 @@
+[Unit]
+Description=Pufferfish
+After=network.target
+
+[Service]
+Type=simple
+Restart=always
+User={{ user_name }}
+ExecStart={{ binary_path }}
+EnvironmentFile=/etc/pufferfish/env
+StandardOutput=file:/var/log/pufferfish/stdout.log
+StandardError=file:/var/log/pufferfish/stderr.log
+
+[Install]
+WantedBy=multi-user.target

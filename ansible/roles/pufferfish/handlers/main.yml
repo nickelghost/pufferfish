@@ -1,0 +1,7 @@
+---
+- name: Restart pufferfish
+  become: true
+  ansible.builtin.systemd:
+    name: pufferfish
+    state: restarted
+    daemon_reload: true
