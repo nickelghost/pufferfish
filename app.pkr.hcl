@@ -27,6 +27,7 @@ variable "region" {
 
 source "amazon-ebs" "ubuntu-22-04" {
   ami_name             = var.name
+  encrypt_boot         = true
   instance_type        = var.instance_type
   region               = var.region
   ssh_username         = "ubuntu"
