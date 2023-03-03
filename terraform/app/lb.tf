@@ -9,22 +9,16 @@ resource "aws_lb" "pufferfish" {
 }
 
 resource "aws_lb_target_group" "pufferfish" {
-  name     = "pufferfish"
-  port     = 8080
-  protocol = "HTTP"
-  vpc_id   = data.aws_vpc.default.id
+  name                 = "pufferfish"
+  vpc_id               = data.aws_vpc.default.id
+  port                 = 8080
+  protocol             = "HTTP"
+  deregistration_delay = 60
 
   health_check {
     enabled = true
     path    = "/health"
   }
-}
-
-resource "aws_lb_target_group_attachment" "pufferfish" {
-  count = local.instance_count
-
-  target_group_arn = aws_lb_target_group.pufferfish.arn
-  target_id        = aws_instance.pufferfish[count.index].id
 }
 
 resource "aws_lb_listener" "pufferfish_http" {
