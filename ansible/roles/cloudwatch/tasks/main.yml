@@ -12,8 +12,8 @@
 - name: Upload cloudwatch agent configuration
   become: true
   notify: Restart cloudwatch agent
-  ansible.builtin.copy:
-    src: config.json
+  ansible.builtin.template:
+    src: config.json.j2
     dest: /opt/aws/amazon-cloudwatch-agent/etc/amazon-cloudwatch-agent.json
     mode: 0644
 - name: Start and enable cloudwatch agent

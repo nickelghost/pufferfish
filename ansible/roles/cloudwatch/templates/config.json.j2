@@ -1,0 +1,12 @@
+{
+  "agent": {
+    "run_as_user": "cwagent"
+  },
+  "logs": {
+    "logs_collected": {
+      "files": {
+        "collect_list": {{ log_files | to_json(indent=2) | indent(width=8) }}
+      }
+    }
+  }
+}
