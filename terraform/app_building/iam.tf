@@ -21,6 +21,12 @@ resource "aws_iam_policy" "get_pufferfish_builds" {
   policy = data.aws_iam_policy_document.get_pufferfish_builds.json
 }
 
+resource "aws_ssm_parameter" "builds_access_policy_arn" {
+  name  = "/pufferfish/infra/builds_access_policy_arn"
+  type  = "String"
+  value = aws_iam_policy.get_pufferfish_builds.arn
+}
+
 resource "aws_iam_role" "pufferfish_builder" {
   name                = "pufferfish-builder"
   assume_role_policy  = data.aws_iam_policy_document.assume_role_ec2.json

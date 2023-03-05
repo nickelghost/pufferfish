@@ -2,10 +2,7 @@ terraform {
   required_version = ">= 1.3"
 
   backend "s3" {
-    region         = "eu-west-1"
-    bucket         = "pufferfish-tfstate-mdoxgx2e"
-    key            = "app.tfstate"
-    dynamodb_table = "pufferfish-tfstate-mdoxgx2e-locks"
+    key = "app.tfstate"
   }
 
   required_providers {

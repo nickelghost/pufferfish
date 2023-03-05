@@ -2,10 +2,6 @@ variable "domain" {
   type = string
 }
 
-variable "builds_access_policy_arn" {
-  type = string
-}
-
 variable "manager_cidr" {
   type    = string
   default = null
