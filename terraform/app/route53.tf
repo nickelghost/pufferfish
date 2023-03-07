@@ -1,9 +1,9 @@
 data "aws_route53_zone" "pufferfish" {
-  name = var.domain
+  name = local.domain
 }
 
 resource "aws_route53_record" "pufferfish" {
-  for_each = toset([var.domain, "www.${var.domain}"])
+  for_each = toset([local.domain, "www.${local.domain}"])
 
   zone_id = data.aws_route53_zone.pufferfish.id
   type    = "A"

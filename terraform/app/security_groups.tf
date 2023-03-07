@@ -20,13 +20,13 @@ resource "aws_security_group" "pufferfish" {
   }
 
   dynamic "ingress" {
-    for_each = var.manager_cidr[*]
+    for_each = local.manager_cidr[*]
     content {
       description = "allow SSH from manager IP"
       from_port   = 22
       to_port     = 22
       protocol    = "tcp"
-      cidr_blocks = [var.manager_cidr]
+      cidr_blocks = [local.manager_cidr]
     }
   }
 }

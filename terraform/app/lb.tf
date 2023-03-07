@@ -61,7 +61,7 @@ resource "aws_lb_listener_rule" "pufferfish" {
 
   condition {
     host_header {
-      values = [var.domain]
+      values = [local.domain]
     }
   }
 }
@@ -72,14 +72,14 @@ resource "aws_lb_listener_rule" "pufferfish_www_redirect" {
   action {
     type = "redirect"
     redirect {
-      host        = var.domain
+      host        = local.domain
       status_code = "HTTP_301"
     }
   }
 
   condition {
     host_header {
-      values = ["www.${var.domain}"]
+      values = ["www.${local.domain}"]
     }
   }
 }

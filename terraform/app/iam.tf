@@ -37,17 +37,13 @@ resource "aws_iam_policy" "put_metrics" {
   policy = data.aws_iam_policy_document.put_metrics.json
 }
 
-data "aws_ssm_parameter" "builds_access_policy_arn" {
-  name = "/pufferfish/infra/builds_access_policy_arn"
-}
-
 resource "aws_iam_role" "pufferfish" {
   name = "pufferfish"
 
   assume_role_policy = data.aws_iam_policy_document.assume_role_ec2.json
 
   managed_policy_arns = [
-    nonsensitive(data.aws_ssm_parameter.builds_access_policy_arn.value),
+    local.builds_access_policy_arn,
     aws_iam_policy.put_pufferfish_logs.arn,
     aws_iam_policy.put_metrics.arn,
   ]

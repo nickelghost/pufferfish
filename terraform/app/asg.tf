@@ -14,14 +14,10 @@ resource "aws_autoscaling_group" "pufferfish" {
   health_check_type    = "ELB"
 }
 
-data "aws_ssm_parameter" "pufferfish_ami_name" {
-  name = "/pufferfish/infra/ami_name"
-}
-
 data "aws_ami" "pufferfish" {
   filter {
     name   = "name"
-    values = [data.aws_ssm_parameter.pufferfish_ami_name.value]
+    values = [local.ami_name]
   }
 }
 
@@ -34,7 +30,7 @@ resource "aws_launch_configuration" "pufferfish" {
   instance_type        = "t3.micro"
   image_id             = data.aws_ami.pufferfish.id
   security_groups      = [aws_security_group.pufferfish.id]
-  key_name             = var.key_name
+  key_name             = local.key_name
   iam_instance_profile = aws_iam_instance_profile.pufferfish.name
 
   metadata_options {
