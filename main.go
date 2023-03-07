@@ -8,8 +8,12 @@ import (
 	"io/fs"
 	"net/http"
 	"os"
+	"sync"
 	"time"
 
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
+	"github.com/aws/aws-sdk-go/service/cloudwatch"
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/rs/zerolog/log"
@@ -87,8 +91,39 @@ func renderTemplate(name string, data any) (string, error) {
 	return minTpl, nil
 }
 
+const metricsNamespace = "Pufferfish"
+
+type Metrics struct {
+	Mu   sync.Mutex
+	Data struct {
+		Views     int
+		FishViews int
+	}
+}
+
+func (m *Metrics) IncViews() {
+	m.Mu.Lock()
+	defer m.Mu.Unlock()
+	m.Data.Views++
+}
+
+func (m *Metrics) IncFishViews() {
+	m.Mu.Lock()
+	defer m.Mu.Unlock()
+	m.Data.Views++
+	m.Data.FishViews++
+}
+
+func (m *Metrics) Reset() {
+	m.Mu.Lock()
+	defer m.Mu.Unlock()
+	m.Data.Views = 0
+	m.Data.FishViews = 0
+}
+
 type Handlers struct {
 	BackgroundColor string
+	Metrics         *Metrics
 }
 
 func (h Handlers) indexHandler(w http.ResponseWriter, r *http.Request) {
@@ -109,6 +144,8 @@ func (h Handlers) indexHandler(w http.ResponseWriter, r *http.Request) {
 
 		return
 	}
+
+	go h.Metrics.IncViews()
 }
 
 func (h Handlers) pufferfishHandler(w http.ResponseWriter, r *http.Request) {
@@ -150,6 +187,8 @@ func (h Handlers) pufferfishHandler(w http.ResponseWriter, r *http.Request) {
 
 		return
 	}
+
+	go h.Metrics.IncFishViews()
 }
 
 func LoggingMiddleware(next http.Handler) http.Handler {
@@ -165,6 +204,32 @@ func LoggingMiddleware(next http.Handler) http.Handler {
 	})
 }
 
+func sendMetrics(cw *cloudwatch.CloudWatch, m *Metrics) {
+	for {
+		time.Sleep(time.Minute)
+
+		md := m.Data
+		m.Reset()
+
+		_, err := cw.PutMetricData(&cloudwatch.PutMetricDataInput{
+			Namespace: aws.String(metricsNamespace),
+			MetricData: []*cloudwatch.MetricDatum{
+				{
+					MetricName: aws.String("Views"),
+					Value:      aws.Float64(float64(md.Views)),
+				},
+				{
+					MetricName: aws.String("FishViews"),
+					Value:      aws.Float64(float64(md.FishViews)),
+				},
+			},
+		})
+		if err != nil {
+			log.Err(err).Msg("metric_put_failed")
+		}
+	}
+}
+
 func run() error {
 	// set up public fs
 	pFS, err := fs.Sub(publicFS, "public")
@@ -173,10 +238,20 @@ func run() error {
 	}
 
 	// set up handlers
-	h := Handlers{BackgroundColor: "white"}
+	h := Handlers{BackgroundColor: "white", Metrics: &Metrics{}} //nolint:exhaustruct
 	if bgColor := os.Getenv("APP_BACKGROUND_COLOR"); bgColor != "" {
 		h.BackgroundColor = bgColor
 	}
+
+	// set up metric reporting
+	sess, err := session.NewSession(&aws.Config{Region: aws.String("eu-west-1")}) //nolint:exhaustruct
+	if err != nil {
+		return fmt.Errorf("creating aws session: %w", err)
+	}
+
+	cw := cloudwatch.New(sess)
+
+	go sendMetrics(cw, h.Metrics)
 
 	// set up router
 	r := chi.NewRouter()
