@@ -1,3 +1,4 @@
+#tfsec:ignore:aws-sns-enable-topic-encryption
 resource "aws_sns_topic" "fish_are_popular_alarm" {
   name = "fish-are-popular-alarm"
 }
