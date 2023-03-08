@@ -5,14 +5,25 @@
   vars:
     aws_region: eu-west-1
     tfbackend_s3_name_parameter_path: "/pufferfish/infra/tfbackend_s3_name"
-    _tfbackend_s3_name: "{{ lookup('aws_ssm', tfbackend_s3_name_parameter_path, on_missing='skip') }}"
+    _tfbackend_s3_name: >-
+      {{
+        lookup('aws_ssm', tfbackend_s3_name_parameter_path, on_missing='skip')
+      }}
   tasks:
     - name: Create the S3 name parameter
       when: _tfbackend_s3_name == ''
       community.aws.ssm_parameter:
         name: "{{ tfbackend_s3_name_parameter_path }}"
         description: Managed by Ansible
-        value: pufferfish-tfstate-{{ lookup('community.general.random_string', upper=false, special=false) }}
+        value: >-
+          pufferfish-tfstate-
+          {{
+            lookup(
+              'community.general.random_string',
+              upper=false,
+              special=false,
+            )
+          }}
     - name: Create the S3 bucket
       amazon.aws.s3_bucket:
         name: "{{ lookup('aws_ssm', tfbackend_s3_name_parameter_path) }}"
