@@ -1,0 +1,64 @@
+---
+name: Lint
+
+'on':
+  push:
+    branches:
+      - main
+
+jobs:
+  lint-terraform:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@v3
+      - name: Validate app_building
+        uses: dflook/terraform-validate@v1
+        with:
+          path: terraform/app_building
+      - name: Validate app
+        uses: dflook/terraform-validate@v1
+        with:
+          path: terraform/app
+      - name: Run tfsec
+        uses: aquasecurity/tfsec-action@v1.0.3
+
+  lint-ansible:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@v3
+      - name: Lint Ansible
+        uses: ansible/ansible-lint-action@v6
+        with:
+          path: ansible/
+
+  lint-yaml:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@v3
+      - name: Lint yaml
+        uses: karancode/yamllint-github-action@v2.1.0
+        with:
+          yamllint_strict: true
+
+  lint-packer:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@v3
+      - name: Initialise Packer
+        run: packer init .
+      - name: Validate Packer files
+        run: packer validate -var "name=lint" ./*.pkr.hcl
+
+  lint-go:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@v3
+      - name: Check if app builds
+        run: go build .
+      - name: Lint Go files
+        uses: golangci/golangci-lint-action@v3
