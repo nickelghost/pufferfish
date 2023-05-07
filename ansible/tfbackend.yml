@@ -27,6 +27,7 @@
     - name: Create the S3 bucket
       amazon.aws.s3_bucket:
         name: "{{ lookup('aws_ssm', tfbackend_s3_name_parameter_path) }}"
+        region: "{{ aws_region }}"
         versioning: true
         encryption: "aws:kms"
         public_access:
