@@ -1,7 +1,7 @@
 ---
 name: Lint
 
-'on':
+"on":
   push:
     branches:
       - main
@@ -28,10 +28,12 @@ jobs:
     steps:
       - name: Clone repo
         uses: actions/checkout@v3
+      - name: Install Galaxy dependencies
+        run: ansible-galaxy install -r ansible/requirements.yml
+      - name: Install ansible-lint
+        run: pip install ansible-lint~=6.16.1
       - name: Lint Ansible
-        uses: ansible/ansible-lint-action@v6
-        with:
-          path: ansible/
+        run: ansible-lint ansible/
 
   lint-yaml:
     runs-on: ubuntu-22.04

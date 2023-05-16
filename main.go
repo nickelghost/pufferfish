@@ -126,7 +126,7 @@ type Handlers struct {
 	Metrics         *Metrics
 }
 
-func (h Handlers) indexHandler(w http.ResponseWriter, r *http.Request) {
+func (h Handlers) indexHandler(w http.ResponseWriter, _ *http.Request) {
 	tpl, err := renderTemplate("index", map[string]any{
 		"PufferfishList":  pufferfishList,
 		"BackgroundColor": h.BackgroundColor,
