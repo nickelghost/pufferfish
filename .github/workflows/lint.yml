@@ -64,3 +64,11 @@ jobs:
         run: go build .
       - name: Lint Go files
         uses: golangci/golangci-lint-action@v3
+
+  lint-shellcheck:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@v3
+      - name: Lint shell files
+        uses: ludeeus/action-shellcheck@2.0.0
