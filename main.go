@@ -93,12 +93,14 @@ func renderTemplate(name string, data any) (string, error) {
 
 const metricsNamespace = "Pufferfish"
 
+type MetricsData struct {
+	Views     int
+	FishViews int
+}
+
 type Metrics struct {
 	Mu   sync.Mutex
-	Data struct {
-		Views     int
-		FishViews int
-	}
+	Data MetricsData
 }
 
 func (m *Metrics) IncViews() {
@@ -114,11 +116,16 @@ func (m *Metrics) IncFishViews() {
 	m.Data.FishViews++
 }
 
-func (m *Metrics) Reset() {
+func (m *Metrics) GetAndReset() MetricsData {
 	m.Mu.Lock()
 	defer m.Mu.Unlock()
+
+	md := m.Data
+
 	m.Data.Views = 0
 	m.Data.FishViews = 0
+
+	return md
 }
 
 type Handlers struct {
@@ -208,8 +215,7 @@ func sendMetrics(cw *cloudwatch.CloudWatch, m *Metrics) {
 	for {
 		time.Sleep(time.Minute)
 
-		md := m.Data
-		m.Reset()
+		md := m.GetAndReset()
 
 		_, err := cw.PutMetricData(&cloudwatch.PutMetricDataInput{
 			Namespace: aws.String(metricsNamespace),
