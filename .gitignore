@@ -5,3 +5,4 @@
 *.tfvars
 
 /bin
+/pufferfish
