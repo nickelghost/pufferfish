@@ -31,7 +31,7 @@ jobs:
       - name: Install Galaxy dependencies
         run: ansible-galaxy install -r ansible/requirements.yml
       - name: Install ansible-lint
-        run: pip install ansible-lint~=6.16.1
+        run: pip install ansible-lint~=26.3.0
       - name: Lint Ansible
         run: ansible-lint ansible/
 
