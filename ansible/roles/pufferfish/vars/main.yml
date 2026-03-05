@@ -1,5 +1,5 @@
 ---
-app_params: >-
+pufferfish_app_params: >-
   {{
     lookup(
       'aws_ssm',
@@ -9,6 +9,6 @@ app_params: >-
       shortnames=true
     )
   }}
-binary_path: /usr/local/bin/pufferfish
-builds_s3_name: "{{ lookup('aws_ssm', '/pufferfish/infra/builds_s3_name') }}"
-user_name: pufferfish
+pufferfish_binary_path: /usr/local/bin/pufferfish
+pufferfish_builds_s3_name: "{{ lookup('aws_ssm', '/pufferfish/infra/builds_s3_name') }}"
+pufferfish_user_name: pufferfish
