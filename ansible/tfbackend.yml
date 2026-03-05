@@ -12,7 +12,7 @@
   tasks:
     - name: Create the S3 name parameter
       when: _tfbackend_s3_name == ''
-      amazon.aws.ssm_parameter:
+      community.aws.ssm_parameter:
         name: "{{ tfbackend_s3_name_parameter_path }}"
         description: Managed by Ansible
         value: >-
