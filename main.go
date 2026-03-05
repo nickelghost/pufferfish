@@ -41,21 +41,21 @@ var pufferfishList = []pufferfish{
 		Name:         "Dwarf Pufferfish",
 		BinomialName: "Carinotetraodon travancoricus",
 		ImageURL:     "/images/dwarf-pufferfish.jpg",
-		MaxLength:    3.5, //nolint:gomnd
+		MaxLength:    3.5, //nolint:mnd
 	},
 	{
 		ID:           "ocellated-pufferfish",
 		Name:         "Ocellated Pufferfish",
 		BinomialName: "Leiodon cutcutia",
 		ImageURL:     "/images/ocellated-pufferfish.jpg",
-		MaxLength:    15, //nolint:gomnd
+		MaxLength:    15, //nolint:mnd
 	},
 	{
 		ID:           "silver-cheeked-toadfish",
 		Name:         "Silver-cheeked Toadfish",
 		BinomialName: "Lagocephalus sceleratus",
 		ImageURL:     "/images/silver-cheeked-toadfish.jpg",
-		MaxLength:    110, //nolint:gomnd
+		MaxLength:    110, //nolint:mnd
 	},
 }
 
@@ -106,12 +106,14 @@ type Metrics struct {
 func (m *Metrics) IncViews() {
 	m.Mu.Lock()
 	defer m.Mu.Unlock()
+
 	m.Data.Views++
 }
 
 func (m *Metrics) IncFishViews() {
 	m.Mu.Lock()
 	defer m.Mu.Unlock()
+
 	m.Data.Views++
 	m.Data.FishViews++
 }
@@ -201,6 +203,7 @@ func (h Handlers) pufferfishHandler(w http.ResponseWriter, r *http.Request) {
 func LoggingMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		start := time.Now()
+
 		next.ServeHTTP(w, r)
 		log.Info().
 			Str("source", r.RemoteAddr).

@@ -1,7 +1,22 @@
 ---
+version: "2"
 linters:
-  enable-all: true
+  default: all
   disable:
-    - varnamelen
-    - exhaustivestruct
+    - depguard
+    - exhaustruct
     - gochecknoglobals
+    - noinlineerr
+    - ireturn
+    - varnamelen
+    - wsl
+  settings:
+    revive:
+      rules:
+        - name: package-comments
+          disabled: true
+formatters:
+  enable:
+    - gofmt
+    - gofumpt
+    - goimports
