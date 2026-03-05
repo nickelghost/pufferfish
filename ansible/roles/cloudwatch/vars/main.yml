@@ -1,2 +1,2 @@
 ---
-deb_storage: /var/cache/apt/archives/
+cloudwatch_deb_storage: /var/cache/apt/archives/
