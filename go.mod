@@ -4,7 +4,7 @@ go 1.19
 
 require (
 	github.com/aws/aws-sdk-go v1.44.214
-	github.com/go-chi/chi/v5 v5.0.8
+	github.com/go-chi/chi/v5 v5.2.2
 	github.com/rs/zerolog v1.29.0
 	github.com/tdewolff/minify v2.3.6+incompatible
 )
