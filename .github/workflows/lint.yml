@@ -14,11 +14,11 @@ jobs:
       - name: Clone repo
         uses: actions/checkout@v3
       - name: Validate app_building
-        uses: dflook/terraform-validate@v1
+        uses: dflook/terraform-validate@v1.44.0
         with:
           path: terraform/app_building
       - name: Validate app
-        uses: dflook/terraform-validate@v1
+        uses: dflook/terraform-validate@v1.44.0
         with:
           path: terraform/app
       - name: Run tfsec
