@@ -17,10 +17,14 @@ jobs:
         uses: dflook/terraform-validate@v1
         with:
           path: terraform/app_building
+          backend_config: |
+            bucket="placeholder"
       - name: Validate app
         uses: dflook/terraform-validate@v1
         with:
           path: terraform/app
+          backend_config: |
+            bucket="placeholder"
       - name: Run tfsec
         uses: aquasecurity/tfsec-action@v1.0.3
 
